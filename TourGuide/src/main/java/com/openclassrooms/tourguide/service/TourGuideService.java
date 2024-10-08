@@ -7,7 +7,7 @@ import com.openclassrooms.tourguide.user.UserReward;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +42,7 @@ public class TourGuideService {
 	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
 		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
-		
+
 		Locale.setDefault(Locale.US);
 
 		if (testMode) {
@@ -94,7 +94,8 @@ public class TourGuideService {
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
 	}
-
+	
+	/*
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
 		List<Attraction> nearbyAttractions = new ArrayList<>();
 		for (Attraction attraction : gpsUtil.getAttractions()) {
@@ -104,6 +105,23 @@ public class TourGuideService {
 		}
 
 		return nearbyAttractions;
+	}
+	 */
+
+	/*
+	 * implemented to fix the code above to return the 5 closest attractions and
+	 * pass the getNearbyAttractions test
+	 */
+	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
+		List<Attraction> attractions = gpsUtil.getAttractions();
+
+		// Sorting attractions by distance from the user's position
+		List<Attraction> sortedAttractions = attractions.stream()
+				.sorted(Comparator.comparingDouble(
+						attraction -> rewardsService.getDistance(attraction, visitedLocation.location)))
+				.limit(5) // Limit to 5 attractions
+				.collect(Collectors.toList());
+		return sortedAttractions;
 	}
 
 	private void addShutDownHook() {
