@@ -7,6 +7,7 @@ import com.openclassrooms.tourguide.user.UserReward;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -39,6 +44,10 @@ public class TourGuideService {
 	public final Tracker tracker;
 	boolean testMode = true;
 
+	// Adding a thread pool to handle multithreading
+	private final ExecutorService executorService = Executors
+			.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+
 	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
 		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
@@ -53,6 +62,28 @@ public class TourGuideService {
 		}
 		tracker = new Tracker(this);
 		addShutDownHook();
+	}
+
+	// Method to track a user's location asynchronously
+	public CompletableFuture<Void> trackUserLocationAsync(User user) {
+		return CompletableFuture.runAsync(() -> trackUserLocation(user), executorService);
+	}
+
+	// Method to track the location of all users in parallel
+	public void trackAllUsersLocation(List<User> users) throws InterruptedException, ExecutionException {
+		List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+		for (User user : users) {
+			futures.add(trackUserLocationAsync(user)); // Run tracking for each user in parallel
+		}
+
+		// Wait for all tasks to complete
+		CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+	}
+
+	// Ensures the correct closure of thread pools
+	public void shutdownService() {
+		executorService.shutdown();
 	}
 
 	public List<UserReward> getUserRewards(User user) {
@@ -94,23 +125,10 @@ public class TourGuideService {
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
 	}
-	
-	/*
-	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for (Attraction attraction : gpsUtil.getAttractions()) {
-			if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
-				nearbyAttractions.add(attraction);
-			}
-		}
-
-		return nearbyAttractions;
-	}
-	 */
 
 	/*
-	 * implemented to fix the code above to return the 5 closest attractions and
-	 * pass the getNearbyAttractions test
+	 * Modified code to return the 5 closest attractions instead of returning a list
+	 * of attractions
 	 */
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
 		List<Attraction> attractions = gpsUtil.getAttractions();
@@ -122,6 +140,31 @@ public class TourGuideService {
 				.limit(5) // Limit to 5 attractions
 				.collect(Collectors.toList());
 		return sortedAttractions;
+	}
+
+	/*
+	 * Added method to display new detailed JSON object, using getNearByAttractions
+	 * as a starting point to extract attractions
+	 */
+	public List<Map<String, Object>> getNearbyAttractionsWithDetails(VisitedLocation visitedLocation, User user) {
+		List<Attraction> attractions = getNearByAttractions(visitedLocation);
+
+		return attractions.stream().map(attraction -> {
+			double distanceInMiles = rewardsService.getDistance(attraction, visitedLocation.location);
+
+			int rewardPoints = rewardsService.getRewardPoints(attraction, user);
+
+			Map<String, Object> attractionInfo = new HashMap<>();
+			attractionInfo.put("Attraction name: ", attraction.attractionName);
+			attractionInfo.put("Attraction latitude: ", attraction.latitude);
+			attractionInfo.put("Attraction longitude: ", attraction.longitude);
+			attractionInfo.put("User's latitude: ", visitedLocation.location.latitude);
+			attractionInfo.put("user's longitude: ", visitedLocation.location.longitude);
+			attractionInfo.put("Distance in miles: ", distanceInMiles);
+			attractionInfo.put("Reward points: ", rewardPoints);
+
+			return attractionInfo;
+		}).collect(Collectors.toList());
 	}
 
 	private void addShutDownHook() {
@@ -178,5 +221,4 @@ public class TourGuideService {
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
-
 }
