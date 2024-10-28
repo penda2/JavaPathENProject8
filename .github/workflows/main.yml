@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
+          distribution: 'temurin'   
 
       # Étape 3 : Build (Compilation)
       - name: Compile the project
@@ -38,7 +39,6 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'
 
       - name: Run tests
         run: mvn test             # Exécute les tests unitaires avec Maven
