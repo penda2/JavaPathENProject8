@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Système d'exploitation utilisé
+    runs-on: ubuntu-latest  # Système d'exploitation utilisé 
 
     steps:
       # Étape 1 : Checkout
