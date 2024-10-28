@@ -50,6 +50,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
+          distribution: 'temurin'   
 
       - name: Run tests
         run: |
@@ -68,6 +69,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
+          distribution: 'temurin'   
 
       - name: Package the application
         run: mvn package -DskipTests  # Crée l’artefact sans réexécuter les tests
