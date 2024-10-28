@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
+          distribution: 'temurin'   
 
       # Étape 3 : Build (Compilation)
       - name: Compile the project
@@ -65,4 +66,3 @@ jobs:
         with:
           name: application-jar
           path: target/*.jar       # Spécifie le fichier `.jar` dans le dossier `target`
-          
