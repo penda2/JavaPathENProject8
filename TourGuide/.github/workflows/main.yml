@@ -24,7 +24,9 @@ jobs:
 
       # Étape 3 : Build (Compilation)
       - name: Compile the project
-        run: mvn clean compile   # Compile le code source avec Maven
+        run: 
+         cd JavaProject8/JavaProject8/TourGuide 
+         mvn clean compile                  # Compile le code source avec Maven
         continue-on-error: false
 
   test:
