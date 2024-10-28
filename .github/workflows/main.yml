@@ -36,7 +36,6 @@ jobs:
         run: |
           cd TourGuide
           mvn clean compile
-
   test:
     runs-on: ubuntu-latest
     needs: build
@@ -46,7 +45,6 @@ jobs:
         run: |
           cd TourGuide
           mvn test
-
   package:
     runs-on: ubuntu-latest
     needs: test
@@ -56,7 +54,6 @@ jobs:
         run: |
           cd TourGuide
           mvn package -DskipTests
-
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
