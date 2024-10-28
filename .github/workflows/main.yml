@@ -25,7 +25,7 @@ jobs:
       # Étape 3 : Build (Compilation)
       - name: Compile the project
         run: | 
-          cd JavaPathENProject8/TourGuide
+          cd JavaPathENProject8/JavaPathENProject8/TourGuide
           mvn clean compile                  # Compile le code source avec Maven
         continue-on-error: false
 
