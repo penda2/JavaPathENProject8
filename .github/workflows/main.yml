@@ -22,15 +22,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'   
 
-      # Installation des dépendances locales
+     # Installation des dépendances locales
       - name: Install gpsUtil.jar
-        run: mvn install:install-file -Dfile=libs/gpsUtil.jar -DgroupId=gpsUtil -DartifactId=gpsUtil -Dversion=1.0.0 -Dpackaging=jar
+        run: mvn install:install-file -Dfile=TourGuide/libs/gpsUtil.jar -DgroupId=gpsUtil -DartifactId=gpsUtil -Dversion=1.0.0 -Dpackaging=jar
 
       - name: Install tripPricer.jar
-        run: mvn install:install-file -Dfile=libs/tripPricer.jar -DgroupId=tripPricer -DartifactId=tripPricer -Dversion=1.0.0 -Dpackaging=jar
+        run: mvn install:install-file -Dfile=TourGuide/libs/tripPricer.jar -DgroupId=tripPricer -DartifactId=tripPricer -Dversion=1.0.0 -Dpackaging=jar
 
       - name: Install rewardCentral.jar
-        run: mvn install:install-file -Dfile=libs/rewardCentral.jar -DgroupId=rewardCentral -DartifactId=rewardCentral -Dversion=1.0.0 -Dpackaging=jar
+        run: mvn install:install-file -Dfile=TourGuide/libs/rewardCentral.jar -DgroupId=rewardCentral -DartifactId=rewardCentral -Dversion=1.0.0 -Dpackaging=jar
     
       # Étape 3 : Build (Compilation)
       - name: Compile the project
