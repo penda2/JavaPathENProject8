@@ -23,11 +23,12 @@ jobs:
           distribution: 'temurin'   
 
       # Étape 3 : Build (Compilation)
+      - name: Navigate to project directory
+        run: cd TourGuide
+
       - name: Compile the project
-        run: | 
-          cd JavaPathENProject8/JavaPathENProject8/TourGuide
-          mvn clean compile                  # Compile le code source avec Maven
-        continue-on-error: false
+        run: mvn clean compile
+
 
   test:
     runs-on: ubuntu-latest
