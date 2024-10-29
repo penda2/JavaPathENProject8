@@ -49,9 +49,20 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          
+       # Installation des dépendances locales
+      - name: Install gpsUtil.jar
+        run: mvn install:install-file -Dfile=TourGuide/libs/gpsUtil.jar -DgroupId=gpsUtil -DartifactId=gpsUtil -Dversion=1.0.0 -Dpackaging=jar
+
+      - name: Install tripPricer.jar
+        run: mvn install:install-file -Dfile=TourGuide/libs/TripPricer.jar -DgroupId=tripPricer -DartifactId=tripPricer -Dversion=1.0.0 -Dpackaging=jar
+
+      - name: Install rewardCentral.jar
+        run: mvn install:install-file -Dfile=TourGuide/libs/RewardCentral.jar -DgroupId=rewardCentral -DartifactId=rewardCentral -Dversion=1.0.0 -Dpackaging=jar 
+          
       - name: Run tests
         run: |
-          cd TourGuide
+          cd TourGuide 
           mvn test
   package:
     runs-on: ubuntu-latest
@@ -66,6 +77,17 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          
+       # Installation des dépendances locales
+      - name: Install gpsUtil.jar
+        run: mvn install:install-file -Dfile=TourGuide/libs/gpsUtil.jar -DgroupId=gpsUtil -DartifactId=gpsUtil -Dversion=1.0.0 -Dpackaging=jar
+
+      - name: Install tripPricer.jar
+        run: mvn install:install-file -Dfile=TourGuide/libs/TripPricer.jar -DgroupId=tripPricer -DartifactId=tripPricer -Dversion=1.0.0 -Dpackaging=jar
+
+      - name: Install rewardCentral.jar
+        run: mvn install:install-file -Dfile=TourGuide/libs/RewardCentral.jar -DgroupId=rewardCentral -DartifactId=rewardCentral -Dversion=1.0.0 -Dpackaging=jar 
+          
       - name: Package the application
         run: |
           cd TourGuide
